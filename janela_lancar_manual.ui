@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>janela_lancar_manual</class>
+ <widget class="QMainWindow" name="janela_lancar_manual">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>408</width>
+    <height>501</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/conta.png</normaloff>:/icons/conta.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+/************************************************************/
+/*JANELA*/
+
+QMainWindow::pane {
+    background-color: rgb(220, 220, 220); /* Cor do painel */
+    font-size: 30px; /* Tamanho da fonte */
+}
+
+QMainWindow::tab {
+     background-color: rgb(220, 220, 220 ); /* Cor das abas selecionadas */
+     color: black;
+}
+
+QMainWindow::tab:selected {
+    background-color: rgb(190,190, 190); /* Cor das abas selecionadas */
+    color: black;
+}
+
+QWidget {
+    background-color: rgb(220, 220, 220);
+    color: black;
+    border: none;
+}
+
+
+/************************************************************/
+/*CAMPOS DE TEXTO*/
+
+QMainWindow QLineEdit {
+    border: 1px solid rgb(120, 120, 120);
+    border-radius: 0;
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+	padding: 8px;
+}
+
+QLineEdit:disabled, QLineEdit:!focus {
+    border: none;
+}
+
+/************************************************************/
+/*CAMPOS DE TEXTO*/
+
+QTabWidget QTextEdit {
+    border: 1px solid rgb(120, 120, 120);
+    border-radius: 0;
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+	padding: 8px
+}
+
+QTabWidget QTextEdit:disabled, QTextEdit:!focus {
+    border: none;
+}
+
+
+/************************************************************/
+/*BUTTON*/
+QPushButton{
+	background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+    padding: 5px;
+}
+
+QPushButton:hover{
+	background-color: rgb(160, 160, 160);
+	border-radius: 12px;
+    padding: 5px;
+}
+
+/************************************************************/
+/*TABLE*/
+
+QTabWidget QTableWidget {
+    background-color: rgb(220, 220, 220); 
+	border: 1px solid rgb(120, 120, 120);
+}
+
+/************************************************************/
+/*DATE*/
+
+ QDateEdit {
+	border: 1px solid rgb(120, 120, 120);
+    border-radius: 12px;
+    background-color: rgb(190, 190, 190);
+	padding: 7px
+}
+
+ QDateEdit:disabled, QDateEdit:!focus {
+   border: none;
+}
+ QDateEdit::up-button {
+    width: 0;
+    height: 0;
+    border: none;
+}
+ QDateEdit::down-button {
+    width: 0;
+    height: 0;
+    border: none;
+}
+
+
+QComboBox {
+    border: none;
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+    padding: 8px
+}
+
+ QComboBox:disabled, QComboBox:!focus {
+    border:none;
+}
+ QComboBox::down-arrow {
+    image: none;
+}
+QComboBox::drop-down {
+    width: 0;
+}
+
+
+
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>16</y>
+      <width>172</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Lançamento manual</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="campo_cnpj_manual">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>80</y>
+      <width>377</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="placeholderText">
+     <string>CNPJ</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="campo_valor_nota_manual">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>384</y>
+      <width>185</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="placeholderText">
+     <string>Valor</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="campo_data_manual">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>224</y>
+      <width>169</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="displayFormat">
+     <string>MM/yyyy</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="campo_numero_nota_manual">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>304</y>
+      <width>169</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="placeholderText">
+     <string>Número da NF</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>56</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>CNPJ</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>200</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Data</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>280</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Tipo de Nota</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>280</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>N° da Nota</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>360</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Valor</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_importar_manual">
+    <property name="geometry">
+     <rect>
+      <x>336</x>
+      <y>448</y>
+      <width>49</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="icons.qrc">
+      <normaloff>:/icons/upload.svg</normaloff>:/icons/upload.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>23</width>
+      <height>23</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="campo_tipo_nota_manual">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>304</y>
+      <width>185</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>PRODUTO</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>SERVIÇO</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>360</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Retenção?</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="campo_retencao_nota_manual">
+    <property name="geometry">
+     <rect>
+      <x>224</x>
+      <y>384</y>
+      <width>169</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <item>
+     <property name="text">
+      <string>NAO</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>SIM</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLineEdit" name="campo_municipio_nota_manual">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>224</y>
+      <width>185</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="placeholderText">
+     <string>Município</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="campo_razao_social_manual">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>152</y>
+      <width>377</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="placeholderText">
+     <string>Razão social</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>128</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Razão social</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>200</y>
+      <width>105</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:transparent</string>
+    </property>
+    <property name="text">
+     <string>Município</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>campo_cnpj_manual</tabstop>
+  <tabstop>campo_razao_social_manual</tabstop>
+  <tabstop>campo_municipio_nota_manual</tabstop>
+  <tabstop>campo_data_manual</tabstop>
+  <tabstop>campo_tipo_nota_manual</tabstop>
+  <tabstop>campo_numero_nota_manual</tabstop>
+  <tabstop>campo_valor_nota_manual</tabstop>
+  <tabstop>campo_retencao_nota_manual</tabstop>
+  <tabstop>btn_importar_manual</tabstop>
+ </tabstops>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

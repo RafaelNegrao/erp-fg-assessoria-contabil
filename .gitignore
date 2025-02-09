@@ -1,0 +1,6 @@
+credentials.py
+*.svg
+pics
+dist
+build
+__pycache__

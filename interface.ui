@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>janela_principal</class>
+ <widget class="QMainWindow" name="janela_principal">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1126</width>
+    <height>803</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/conta.png</normaloff>:/icons/conta.png</iconset>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1132</width>
+      <height>806</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+/************************************************************/
+/*JANELA*/
+
+QTabWidget::pane {
+    background-color: rgb(220, 220, 220); /* Cor do painel */
+    font-size: 30px; /* Tamanho da fonte */
+}
+
+QTabBar::tab {
+     background-color: rgb(220, 220, 220 ); /* Cor das abas selecionadas */
+     color: black;
+}
+
+QTabBar::tab:selected {
+    background-color: rgb(190,190, 190); /* Cor das abas selecionadas */
+    color: black;
+}
+
+QHeader{
+ 	background-color: rgb(40, 45, 50)
+}
+
+QWidget {
+    background-color: rgb(220, 220, 220);
+    color: black;
+    border: none;
+}
+
+QTabBar::tab:Hover {
+    background-color: rgb(190, 190, 190); /* Cor das abas selecionadas */
+}
+
+/************************************************************/
+/*CAMPOS DE TEXTO*/
+
+QTabWidget QLineEdit {
+    border: 1px solid rgb(120, 120, 120);
+    border-radius: 0;
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+	padding: 8px;
+}
+
+QLineEdit:disabled, QLineEdit:!focus {
+    border: none;
+}
+
+/************************************************************/
+/*CAMPOS DE TEXTO*/
+
+QTabWidget QTextEdit {
+    border: 1px solid rgb(120, 120, 120);
+    border-radius: 0;
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+	padding: 8px
+}
+
+QTabWidget QTextEdit:disabled, QTextEdit:!focus {
+    border: none;
+}
+
+/************************************************************/
+/*COMBOBOX*/
+
+QTabWidget QComboBox {
+     border: 1px solid rgb(120, 120, 120);
+    background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+    padding: 8px
+}
+
+QTabWidget QComboBox:disabled, QComboBox:!focus {
+     border: none;
+}
+
+QTabWidget QComboBox::down-arrow {
+    image: none;
+}
+
+QTabWidget QComboBox::drop-down {
+    width: 0;
+}
+/************************************************************/
+/*LABEL*/
+QTabWidget QLabel{
+	background-color: transparent;
+
+}
+
+
+/************************************************************/
+/*BUTTON*/
+
+QTabWidget QPushButton{
+	background-color: rgb(190, 190, 190);
+	border-radius: 12px;
+    padding: 5px;
+}
+
+QTabWidget QPushButton:hover{
+	background-color: rgb(160, 160, 160);
+	border-radius: 12px;
+    padding: 5px;
+}
+
+/************************************************************/
+/*TABLE*/
+
+QTabWidget QTableWidget {
+    background-color: rgb(220, 220, 220); 
+    border: 1px solid rgb(120, 120, 120);
+    border-radius: 20px;
+}
+
+/* Ajusta o cabeçalho para seguir o border-radius */
+QTableWidget::corner {
+    border-top-left-radius: 20px;
+    background-color: transparent;
+}
+
+/* Ajusta os títulos das colunas (cabeçalho horizontal) */
+QHeaderView::section {
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+}
+
+/* Impede que o cabeçalho fique cortado */
+QTableWidget QHeaderView {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+	background-color:rgb(190, 190, 190);
+	font-weight: bold; 
+}
+/************************************************************/
+/*DATE*/
+
+QTabWidget QDateEdit {
+	border: 1px solid rgb(120, 120, 120);
+    border-radius: 12px;
+    background-color: rgb(190, 190, 190);
+	padding: 7px
+}
+
+QTabWidget QDateEdit:disabled,QTabWidget QDateEdit:!focus {
+   border: none;
+}
+
+QTabWidget QDateEdit::up-button {
+    width: 0;
+    height: 0;
+    border: none;
+}
+
+QTabWidget QDateEdit::down-button {
+    width: 0;
+    height: 0;
+    border: none;
+}
+
+
+
+</string>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Consolidado</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Lançamentos</string>
+     </attribute>
+     <widget class="QComboBox" name="campo_cliente_lancamento">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>48</y>
+        <width>545</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>Pan-dai</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="btn_importar_xml">
+      <property name="geometry">
+       <rect>
+        <x>976</x>
+        <y>48</y>
+        <width>49</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/filetype-xml.svg</normaloff>:/icons/filetype-xml.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>26</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_lancar_manual">
+      <property name="geometry">
+       <rect>
+        <x>1032</x>
+        <y>48</y>
+        <width>49</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/pencil-square.svg</normaloff>:/icons/pencil-square.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>184</y>
+        <width>172</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Registros</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tabela_lancamentos">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>216</y>
+        <width>1033</width>
+        <height>409</height>
+       </rect>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="rowCount">
+       <number>0</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>114</number>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>CLIENTE</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>CNPJ</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>DATA</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>TIPO</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NÚMERO NOTA</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>MUNICÍPIO</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>VALOR</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>RETENÇÃO</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>AÇÕES</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>688</y>
+        <width>73</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Produto:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>104</y>
+        <width>25</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string>ID:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>128</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string>CNPJ:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="campo_id">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>88</x>
+        <y>104</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="campo_cnpj_cliente">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>88</x>
+        <y>128</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>656</y>
+        <width>172</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>14</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Totais</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>720</y>
+        <width>73</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Serviço:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>24</y>
+        <width>172</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Cliente</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="total_notas_produtos">
+      <property name="geometry">
+       <rect>
+        <x>112</x>
+        <y>688</y>
+        <width>241</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>328</x>
+        <y>128</y>
+        <width>41</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string>IE:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="campo_ie">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>368</x>
+        <y>128</y>
+        <width>201</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_salvar">
+      <property name="geometry">
+       <rect>
+        <x>1032</x>
+        <y>712</y>
+        <width>49</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/upload.svg</normaloff>:/icons/upload.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>25</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="total_notas_servico">
+      <property name="geometry">
+       <rect>
+        <x>112</x>
+        <y>720</y>
+        <width>241</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <attribute name="title">
+      <string>Consulta</string>
+     </attribute>
+     <widget class="QDateEdit" name="dateEdit">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>56</y>
+        <width>121</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="displayFormat">
+       <string>MM/yyyy</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>32</y>
+        <width>172</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Cliente</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_importar_xml_2">
+      <property name="geometry">
+       <rect>
+        <x>1024</x>
+        <y>56</y>
+        <width>57</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="icons.qrc">
+        <normaloff>:/icons/search.svg</normaloff>:/icons/search.svg</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>23</width>
+        <height>23</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="campo_cliente_lancamento_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>56</y>
+        <width>545</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <item>
+       <property name="text">
+        <string>Pan-dai</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>32</y>
+        <width>113</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mês Referência</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>128</y>
+        <width>193</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Registros por Município</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>160</y>
+        <width>1041</width>
+        <height>585</height>
+       </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>347</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>MUNICÍPIO</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>TIPO DE NOTA</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>VALOR</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Obrigações</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>16</y>
+        <width>1009</width>
+        <height>705</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_5">
+     <attribute name="title">
+      <string>Cadastros</string>
+     </attribute>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

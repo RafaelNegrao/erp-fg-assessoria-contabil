@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>d0267b4d9d1d40dab9ec5eac4fedc3f8.png</file>
+    <file>conta.png</file>
+    <file>filetype-xml.svg</file>
+    <file>x-circle.svg</file>
+    <file>search.svg</file>
+    <file>pencil-square.svg</file>
+    <file>upload.svg</file>
+  </qresource>
+</RCC>

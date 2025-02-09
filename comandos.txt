@@ -1,0 +1,14 @@
+comando cmd
+
+*converter o código para python
+pyuic5 -x interface.ui -o Interface.py
+pyuic5 -x janela_lancar_manual.ui -o janela_lancar_manual.py
+pyuic5 -x janela_login.ui -o janela_login.py
+
+
+
+*converter o conteúdo da pasta icons para python
+pyrcc5 -o icons_rc.py icons.qrc
+
+
+pyinstaller --onefile --noconsole --add-data "icons_rc.py;." functions.py credentials.py janela_lancar_manual.py janela_login.py
