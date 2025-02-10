@@ -249,7 +249,7 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <pointsize>20</pointsize>
        </font>
       </property>
       <property name="cursor">
@@ -264,8 +264,8 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="iconSize">
        <size>
-        <width>25</width>
-        <height>26</height>
+        <width>29</width>
+        <height>29</height>
        </size>
       </property>
       <property name="flat">
@@ -299,8 +299,8 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="iconSize">
        <size>
-        <width>25</width>
-        <height>25</height>
+        <width>29</width>
+        <height>29</height>
        </size>
       </property>
       <property name="flat">
@@ -337,7 +337,7 @@ QTabWidget QDateEdit::down-button {
         <x>48</x>
         <y>216</y>
         <width>1033</width>
-        <height>409</height>
+        <height>433</height>
        </rect>
       </property>
       <property name="verticalScrollBarPolicy">
@@ -350,7 +350,7 @@ QTabWidget QDateEdit::down-button {
        <number>0</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>114</number>
+       <number>115</number>
       </attribute>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
@@ -622,7 +622,7 @@ QTabWidget QDateEdit::down-button {
        <rect>
         <x>328</x>
         <y>128</y>
-        <width>41</width>
+        <width>25</width>
         <height>17</height>
        </rect>
       </property>
@@ -647,7 +647,7 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="geometry">
        <rect>
-        <x>368</x>
+        <x>344</x>
         <y>128</y>
         <width>201</width>
         <height>17</height>
@@ -694,8 +694,8 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="iconSize">
        <size>
-        <width>25</width>
-        <height>25</height>
+        <width>29</width>
+        <height>29</height>
        </size>
       </property>
       <property name="flat">
@@ -721,6 +721,100 @@ QTabWidget QDateEdit::down-button {
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>48</x>
+        <y>152</y>
+        <width>81</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string>ENDEREÇO:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="campo_endereco_cliente">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>128</x>
+        <y>152</y>
+        <width>537</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color:rgb(150,150,150)</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>608</x>
+        <y>24</y>
+        <width>113</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Mês Referência</string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="mes_lancamento">
+      <property name="geometry">
+       <rect>
+        <x>608</x>
+        <y>48</y>
+        <width>121</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="displayFormat">
+       <string>MM/yyyy</string>
       </property>
      </widget>
     </widget>
@@ -907,17 +1001,72 @@ QTabWidget QDateEdit::down-button {
      <attribute name="title">
       <string>Obrigações</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox">
+     <widget class="QTableWidget" name="tableWidget_5">
       <property name="geometry">
        <rect>
-        <x>48</x>
-        <y>16</y>
-        <width>1009</width>
+        <x>32</x>
+        <y>48</y>
+        <width>800</width>
         <height>705</height>
        </rect>
       </property>
-      <property name="title">
-       <string>GroupBox</string>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>160</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>CLIENTE</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>FOLHA</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>DAS</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OUTRO</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>COMENTÁRIO</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>32</x>
+        <y>16</y>
+        <width>249</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Lista de Obrigações Mensais</string>
       </property>
      </widget>
     </widget>

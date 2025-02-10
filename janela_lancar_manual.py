@@ -123,18 +123,20 @@ class Ui_janela_lancar_manual(object):
 "\n"
 "\n"
 "QComboBox {\n"
-"    border: none;\n"
+"     border: 1px solid rgb(120, 120, 120);\n"
 "    background-color: rgb(190, 190, 190);\n"
 "    border-radius: 12px;\n"
 "    padding: 8px\n"
 "}\n"
 "\n"
-" QComboBox:disabled, QComboBox:!focus {\n"
-"    border:none;\n"
+"QComboBox:disabled, QComboBox:!focus {\n"
+"     border: none;\n"
 "}\n"
-" QComboBox::down-arrow {\n"
+"\n"
+"QComboBox::down-arrow {\n"
 "    image: none;\n"
 "}\n"
+"\n"
 "QComboBox::drop-down {\n"
 "    width: 0;\n"
 "}\n"
@@ -173,6 +175,7 @@ class Ui_janela_lancar_manual(object):
         font.setFamily("Segoe UI")
         font.setPointSize(11)
         self.campo_data_manual.setFont(font)
+        self.campo_data_manual.setCalendarPopup(False)
         self.campo_data_manual.setObjectName("campo_data_manual")
         self.campo_numero_nota_manual = QtWidgets.QLineEdit(self.centralwidget)
         self.campo_numero_nota_manual.setGeometry(QtCore.QRect(224, 304, 169, 41))
@@ -329,7 +332,7 @@ class Ui_janela_lancar_manual(object):
         self.label_2.setText(_translate("janela_lancar_manual", "Lançamento manual"))
         self.campo_cnpj_manual.setPlaceholderText(_translate("janela_lancar_manual", "CNPJ"))
         self.campo_valor_nota_manual.setPlaceholderText(_translate("janela_lancar_manual", "Valor"))
-        self.campo_data_manual.setDisplayFormat(_translate("janela_lancar_manual", "MM/yyyy"))
+        self.campo_data_manual.setDisplayFormat(_translate("janela_lancar_manual", "dd/MM/yyyy"))
         self.campo_numero_nota_manual.setPlaceholderText(_translate("janela_lancar_manual", "Número da NF"))
         self.label_3.setText(_translate("janela_lancar_manual", "CNPJ"))
         self.label_4.setText(_translate("janela_lancar_manual", "Data"))

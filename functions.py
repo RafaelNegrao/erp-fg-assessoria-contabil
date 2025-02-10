@@ -4,12 +4,13 @@ from Interface import Ui_janela_principal
 from janela_lancar_manual import Ui_janela_lancar_manual
 from janela_login import Ui_janela_login
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem, QPushButton, QWidget, QHBoxLayout
-from PyQt5.QtCore import QObject, QTimer
+from PyQt5.QtCore import QObject, QTimer, QSize, QDateTime, QDate
 import requests
 import xml.etree.ElementTree as ET
 import locale
 from firebase_admin import db
 from credentials import *
+import datetime
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')  # Define formatação brasileira
 ref = db.reference("/")
@@ -41,7 +42,6 @@ class Funcoes(QObject):
                 tree = ET.parse(arquivo)
                 root = tree.getroot()
 
-                # VERIFICA SE É O FORMATO COM VÁRIOS REGISTROS (ex.: 8474.xml)
                 notas_nfdok = root.findall(".//nfdok")
                 if notas_nfdok:
                     # Para cada <nfdok>, buscar os elementos <NOTA_FISCAL>
@@ -50,7 +50,7 @@ class Funcoes(QObject):
                         for nota in notas:
                             situacao = (nota.findtext("SituacaoNf") or "Normal").strip().upper()
                             if situacao != "NORMAL":
-                                continue  # Ignora notas que não estejam em situação “NORMAL”
+                                continue  
 
                             cliente = (nota.findtext("ClienteNomeRazaoSocial") or "").strip().upper()
                             cnpj = self.formatar_cnpj(nota.findtext("ClienteCNPJCPF") or "")
@@ -118,23 +118,27 @@ class Funcoes(QObject):
 
     def editar_registro(self):
         """Permite editar o valor e reajusta a soma total"""
-        button = self.sender()
+        button = self.sender() 
         if button:
-            container = button.parent()
-            if container:
-                linha = self.encontrar_linha_por_widget(container)
-                if linha != -1:
-                    tabela = self.ui.tabela_lancamentos
-                    item_valor = tabela.item(linha, 6)
-                    
-                    if item_valor:
-                        valor_inicial = self.formatar_moeda(item_valor.text())
-                        novo_valor, ok = QtWidgets.QInputDialog.getDouble(
-                            None, "Editar Valor", "Digite o novo valor:", valor_inicial, 0, 9999999, 2)
-                        
-                        if ok and novo_valor != valor_inicial:
-                            item_valor.setText(f"R$ {novo_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
-                            self.recalcular_total()
+            tabela = self.ui.tabela_lancamentos
+            for linha in range(tabela.rowCount()):
+                container = tabela.cellWidget(linha, 8)  
+                if container:
+                    layout = container.layout()
+                    if layout and layout.indexOf(button) != -1: 
+                        item_valor = tabela.item(linha, 6)  
+
+                        if item_valor:
+                            valor_inicial = self.formatar_moeda(item_valor.text())
+                            novo_valor, ok = QtWidgets.QInputDialog.getDouble(
+                                None, "Editar Valor", "Digite o novo valor:", valor_inicial, 0, 9999999, 2
+                            )
+
+                            if ok and novo_valor != valor_inicial:
+                                item_valor.setText(f"R$ {novo_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+                                self.recalcular_total()
+                        break  
+
 
     def excluir_registro(self):
         """Remove a linha correspondente e refaz a soma do total"""
@@ -185,7 +189,6 @@ class Funcoes(QObject):
         for coluna, valor_texto in enumerate(dados):
             tabela.setItem(linha, coluna, QTableWidgetItem(valor_texto))
 
-        # Adiciona botões de ações com emojis
         btn_editar = QPushButton("🖋️")
         btn_excluir = QPushButton("❌")
 
@@ -240,29 +243,24 @@ class Funcoes(QObject):
         total_servicos = 0.0
 
         for linha in range(tabela.rowCount()):
-            item_tipo = tabela.item(linha, 3)  # Coluna 4: Tipo (Produto ou Serviço)
-            item_valor = tabela.item(linha, 6)  # Coluna 6: Valor
+            item_tipo = tabela.item(linha, 3)  
+            item_valor = tabela.item(linha, 6)  
 
-            if item_tipo is not None and item_valor is not None:  # Verifica se o item existe
+            if item_tipo is not None and item_valor is not None:  
                 tipo_texto = item_tipo.text().strip() if item_tipo.text() else ""
                 valor_texto = item_valor.text().strip() if item_valor.text() else ""
 
-                print(f"Linha {linha}: Tipo = '{tipo_texto}', Valor = '{valor_texto}'")  # Para depuração
-
                 try:
-                    if valor_texto:  # Verifica se a string não está vazia
+                    if valor_texto:  
                         valor = float(valor_texto.replace("R$", "").replace(".", "").replace(",", "."))
 
-                        # Verifica o tipo e adiciona ao total correspondente
                         if tipo_texto.upper() == "PRODUTO":
                             total_produtos += valor
                         elif tipo_texto.upper() == "SERVIÇO":
                             total_servicos += valor
                 except ValueError:
-                    print(f"Erro ao converter o valor na linha {linha}: '{valor_texto}'")  # Debugging
-                    continue  # Ignorar linha com erro
+                    continue  
 
-        # Formata os totais como moeda e exibe na UI
         total_produtos_formatado = f"R$ {total_produtos:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         self.ui.total_notas_produtos.setText(total_produtos_formatado)
 
@@ -324,7 +322,6 @@ class Funcoes(QObject):
         janela_manual.show()
         pass
 
-    
     def buscar_dados_cnpj(self,cnpj):
         try:
             url = f"https://www.receitaws.com.br/v1/cnpj/{cnpj}"
@@ -358,21 +355,20 @@ class Funcoes(QObject):
         tipo = ui_2.campo_tipo_nota_manual.currentText()
         numero = ui_2.campo_numero_nota_manual.text()
 
-        valor = ui_2.campo_valor_nota_manual.text().replace("R$", "").replace(",", ".")  # Caso o valor venha com 'R$'
+        valor = ui_2.campo_valor_nota_manual.text().replace("R$", "").replace(",", ".") 
         retencao = ui_2.campo_retencao_nota_manual.currentText()
 
         try:
-            valor = float(valor)  # Converte o valor para float
+            valor = float(valor)  
             valor_formatado = self.formatar_moeda(f'R${valor}')
 
             # Adiciona a linha na tabela com os dados corretos
             self.adicionar_linha_tabela(cliente, cnpj, data, tipo, numero, municipio, valor_formatado, retencao)
 
-            # Atualiza os totais, distinguindo entre Produto e Serviço
             if tipo == "PRODUTO":
-                self.atualizar_totais(valor, 0.0)  # Adiciona ao total de produtos
+                self.atualizar_totais(valor, 0.0)  
             elif tipo == "SERVIÇO":
-                self.atualizar_totais(0.0, valor)  # Adiciona ao total de serviços
+                self.atualizar_totais(0.0, valor)  
 
             # Limpa os campos após o lançamento
             ui_2.campo_cnpj_manual.clear()
@@ -385,38 +381,132 @@ class Funcoes(QObject):
             ui_2.campo_cnpj_manual.setFocus()
 
         except ValueError:
-            # Se o valor não for numérico, exibe uma mensagem de erro
+
             QMessageBox.warning(self, "Erro", "Por favor, insira um valor válido para a nota.")
 
     def evento_ao_fechar(self, event):
         """Fecha a janela secundária ao fechar a principal"""
         if janela_manual.isVisible():
-            janela_manual.close()  # Fecha a janela secundária, se ela estiver visível
+            janela_manual.close()  
 
-        event.accept()  # Aceita o evento de fechamento da janela principal
+        event.accept()  
 
     def iniciar_splash(self):
         """Atualiza a barra de progresso suavemente e fecha a splash após 5 segundos"""
-        self.progresso = 0.0  # Agora progresso é um atributo da classe para evitar 'nonlocal'
+        self.progresso = 0.0  
 
         def atualizar_barra():
-            self.progresso += 0.1  # Incrementa 0.1% por atualização
+            self.progresso += 0.1 
 
             if self.progresso >= 100:
-                self.timer.stop()  # Para o timer
-                janela_login.close()  # Fecha a Splash Screen
-                janela.show()  # Abre a janela principal
+                self.timer.stop()  
+                janela_login.close()  
+                janela.show()  
             else:
-                ui_login.barra_progresso.setValue(int(self.progresso))  # Converte para int
+                ui_login.barra_progresso.setValue(int(self.progresso)) 
 
         self.timer = QTimer()
         self.timer.timeout.connect(atualizar_barra)
-        self.timer.start(3)  # Atualiza a cada 5ms para um carregamento suave
+        self.timer.start(2)  
+
+    def iso_para_data(self, data_str):
+        """
+        Converte uma string no formato "MM/yyyy" para um QDateTime.
+        Como só temos mês e ano, definimos o dia como 1 e a hora como 00:00.
+        """
+        dt = datetime.datetime.strptime(data_str, "%m/%Y")
+        # Cria um QDateTime a partir do datetime
+        qdt = QDateTime(dt)
+        return qdt
+
+    def data_para_iso(self, data):
+        """
+        Converte um objeto QDate ou QDateTime para uma string no formato "MM/yyyy".
+        """
+        if isinstance(data, QDate):
+            # Se for QDate, usa o método toString para formatar
+            return data.toString("MM/yyyy")
+        elif isinstance(data, QDateTime):
+            # Se for QDateTime, converte para datetime do Python e formata
+            dt = data.toPyDateTime()
+            return dt.strftime("%m/%Y")
+        else:
+            # Se for um objeto datetime do Python, formata diretamente
+            return data.strftime("%m/%Y")
+
+    def salvar_dados_xml(self):
+        usuario = self.ui.campo_cliente_lancamento.currentText()
+
+        lancamentos_ref = db.reference(f"/Lancamentos/{usuario}")
+        
+        qdate = self.ui.mes_lancamento.date()  
+        ano_str = str(qdate.year())
+        mes_str = f"{qdate.month():02d}"  
+        
+
+        ano_ref = lancamentos_ref.child(ano_str)
+        mes_ref = ano_ref.child(mes_str)
+        
+        table = self.ui.tabela_lancamentos
+        num_rows = table.rowCount()
+        
+        for row in range(num_rows):
+
+            cliente    = table.item(row, 0).text() if table.item(row, 0) else ""
+            cnpj       = table.item(row, 1).text() if table.item(row, 1) else ""
+            data_nf    = table.item(row, 2).text() if table.item(row, 2) else ""  
+            tipo       = table.item(row, 3).text() if table.item(row, 3) else ""
+            numero     = table.item(row, 4).text() if table.item(row, 4) else ""
+            municipio  = table.item(row, 5).text() if table.item(row, 5) else ""
+            valor      = table.item(row, 6).text() if table.item(row, 6) else ""
+            retencao   = table.item(row, 7).text() if table.item(row, 7) else ""
+            
+
+            raw_key = f"{tipo}_{numero}_{cnpj}"
+
+            nf_key = raw_key.replace('.', '').replace('/', '').replace('$', '').replace('#', '').replace('[', '').replace(']', '')
+
+            try:
+                data_nf_obj = datetime.datetime.strptime(data_nf, "%d/%m/%Y")  
+            except ValueError:
+                data_nf_obj = data_nf  
+
+            data = self.data_para_iso_nota(data_nf_obj)
+
+            nf_data = {
+                "cliente": cliente,
+                "cnpj": cnpj,
+                "data": data,  
+                "tipo": tipo,
+                "numero": numero,
+                "municipio": municipio,
+                "valor": valor,
+                "retencao": retencao
+            }
+            
+            mes_ref.child("nf").child(nf_key).set(nf_data)
+        
+        mes_ref.child("obrigacoes").set({})
+        
+        QMessageBox.information(None, "Salvar XML", "Dados salvos com sucesso!")
 
 
+    def iso_para_data_nota(self,data):
+        dt = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%SZ")
+        qdt = QDateTime(dt)
+        return qdt
 
-      
-    
+    def data_para_iso_nota(self, data):
+        if isinstance(data, QDateTime):  
+            dt = data.toPyDateTime()
+        elif isinstance(data, datetime.datetime):  
+            dt = data
+        else:  
+            dt = datetime.datetime.strptime(data, "%d/%m/%Y")
+        
+        iso_str = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        return iso_str
+        
 
 
 
@@ -435,11 +525,9 @@ ui = Ui_janela_principal()
 ui_2 = Ui_janela_lancar_manual()
 ui_login = Ui_janela_login()
 
-# Configura a interface principal na janela principal
-ui.setupUi(janela)
-# Configure a interface da janela manual na janela_manual!
-ui_2.setupUi(janela_manual)
 
+ui.setupUi(janela)
+ui_2.setupUi(janela_manual)
 ui_login.setupUi(janela_login)
 
 funcoes_app = Funcoes(ui)
@@ -448,17 +536,20 @@ janela.setWindowTitle("Gerenciador")
 janela_login.setWindowTitle("Gerenciador")
 janela_manual.setWindowTitle("Lançamento manual")
 
+janela_login.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
 ui_2.campo_cnpj_manual.editingFinished.connect(lambda: funcoes_app.buscar_dados_cnpj(ui_2.campo_cnpj_manual.text()))
 ui_2.campo_cnpj_manual.editingFinished.connect(lambda: ui_2.campo_cnpj_manual.setText(funcoes_app.formatar_cnpj(ui_2.campo_cnpj_manual.text())))
 
 
-
+ui.btn_salvar.clicked.connect(lambda: funcoes_app.salvar_dados_xml())
 ui_2.campo_cnpj_manual.editingFinished.connect(lambda: ui_2.campo_cnpj_manual.setText(funcoes_app.formatar_cnpj(ui_2.campo_cnpj_manual.text())))
 ui_2.btn_importar_manual.clicked.connect(lambda: funcoes_app.importar_manual())
 ui.btn_importar_xml.clicked.connect(lambda: funcoes_app.importar_xml())
 ui.btn_lancar_manual.clicked.connect(lambda: funcoes_app.abrir_janela_lancar_manual())
 ui.campo_cliente_lancamento.currentIndexChanged.connect(lambda: funcoes_app.carregar_informacoes_cliente())
 
+ui.btn_importar_xml.setIconSize(QSize(64, 64))
 janela.showEvent = funcoes_app.carregar_dados_cliente
 janela.closeEvent = funcoes_app.evento_ao_fechar
 

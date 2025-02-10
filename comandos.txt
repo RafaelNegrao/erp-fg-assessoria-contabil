@@ -12,3 +12,8 @@ pyrcc5 -o icons_rc.py icons.qrc
 
 
 pyinstaller --onefile --noconsole --add-data "icons_rc.py;." functions.py credentials.py janela_lancar_manual.py janela_login.py
+
+
+from janela_lancar_manual import Ui_janela_lancar_manual
+from janela_login import Ui_janela_login
+from Interface import Ui_janela_principal

@@ -123,18 +123,20 @@ QTabWidget QTableWidget {
 
 
 QComboBox {
-    border: none;
+     border: 1px solid rgb(120, 120, 120);
     background-color: rgb(190, 190, 190);
 	border-radius: 12px;
     padding: 8px
 }
 
- QComboBox:disabled, QComboBox:!focus {
-    border:none;
+QComboBox:disabled, QComboBox:!focus {
+     border: none;
 }
- QComboBox::down-arrow {
+
+QComboBox::down-arrow {
     image: none;
 }
+
 QComboBox::drop-down {
     width: 0;
 }
@@ -219,7 +221,10 @@ QComboBox::drop-down {
      </font>
     </property>
     <property name="displayFormat">
-     <string>MM/yyyy</string>
+     <string>dd/MM/yyyy</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="campo_numero_nota_manual">
