@@ -479,12 +479,8 @@ class Funcoes(QObject):
             return data.strftime("%m/%Y")
 
     def salvar_dados_xml(self):
-
-
-
         usuario = ui.campo_cliente_lancamento.currentText()
         data = ui.data_lancamento.date()
-
 
         erros = []
 
@@ -493,6 +489,10 @@ class Funcoes(QObject):
             erros.append("O nome do cliente não pode estar vazio.")
         if not data:
             erros.append("A data não pode estar vazia.")
+
+        # Verificação se a tabela está vazia
+        if ui.tabela_lancamentos.rowCount() == 0:
+            erros.append("A tabela de lançamentos está vazia. Adicione pelo menos um lançamento.")
 
         # Se houver erros, exibe todos de uma vez e interrompe a execução
         if erros:
@@ -507,13 +507,8 @@ class Funcoes(QObject):
                 QMessageBox.critical(None, "Data Inválida", "A data 01/2000 não é permitida. Por favor, informe uma data válida.")
                 return
             else:
-                resposta = QMessageBox.question(
-                    None,
-                    "Data Inconsistente",
-                    f"A data informada ({data.toString()}) não está no mês/ano atual. Deseja continuar?",
-                    QMessageBox.Yes | QMessageBox.No,
-                    QMessageBox.No
-                )
+                resposta = QMessageBox.question(None,"Data Inconsistente",f"A data informada ({data.toString()}) não está no mês/ano atual. Deseja continuar?",
+                    QMessageBox.Yes | QMessageBox.No,)
                 if resposta == QMessageBox.No:
                     return
 
