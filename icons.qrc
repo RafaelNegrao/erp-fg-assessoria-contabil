@@ -1,11 +1,14 @@
 <RCC>
   <qresource prefix="icons">
+    <file>download-direto.svg</file>
+    <file>arrows_16369209.png</file>
+    <file>add-user_5089847.svg</file>
+    <file>botao-editar.svg</file>
+    <file>xml-_1_.svg</file>
+    <file>upload-de-arquivo.svg</file>
+    <file>pesquisa.svg</file>
+    <file>update-svgrepo-com.svg</file>
     <file>d0267b4d9d1d40dab9ec5eac4fedc3f8.png</file>
     <file>conta.png</file>
-    <file>filetype-xml.svg</file>
-    <file>x-circle.svg</file>
-    <file>search.svg</file>
-    <file>pencil-square.svg</file>
-    <file>upload.svg</file>
   </qresource>
 </RCC>

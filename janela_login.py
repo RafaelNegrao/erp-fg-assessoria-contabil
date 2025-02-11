@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_janela_login(object):
     def setupUi(self, janela_login):
         janela_login.setObjectName("janela_login")
-        janela_login.resize(677, 376)
+        janela_login.resize(682, 376)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/conta.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         janela_login.setWindowIcon(icon)

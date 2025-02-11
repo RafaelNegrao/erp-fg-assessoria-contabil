@@ -3,8 +3,8 @@ from PyQt5 import QtWidgets, QtCore
 from Interface import Ui_janela_principal
 from janela_lancar_manual import Ui_janela_lancar_manual
 from janela_login import Ui_janela_login
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem, QPushButton, QWidget, QHBoxLayout
-from PyQt5.QtCore import QObject, QTimer, QSize, QDateTime, QDate
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableWidgetItem, QPushButton, QWidget, QHBoxLayout,  QCheckBox
+from PyQt5.QtCore import QObject, QTimer, QDateTime, QDate,Qt
 import requests
 import xml.etree.ElementTree as ET
 import locale
@@ -36,6 +36,10 @@ class Funcoes(QObject):
         contador_notas_importadas = 0
         valor_total = 0.0
         valor_total_produtos = 0.0
+        contador_notas_data_invalida = 0  # Contador para notas com data incompatível
+
+        # Data de lançamento definida no sistema (assumindo que seja um QDate)
+        mes_lancamento_date = self.ui.data_lancamento.date()
 
         for arquivo in arquivos:
             try:
@@ -44,7 +48,7 @@ class Funcoes(QObject):
 
                 notas_nfdok = root.findall(".//nfdok")
                 if notas_nfdok:
-                    # Para cada <nfdok>, buscar os elementos <NOTA_FISCAL>
+                    # Processa notas no formato <nfdok>
                     for nfdok in notas_nfdok:
                         notas = nfdok.findall(".//NOTA_FISCAL")
                         for nota in notas:
@@ -57,6 +61,11 @@ class Funcoes(QObject):
 
                             data_raw = (nota.findtext("DataEmissao") or "").strip()
                             data = self.formatar_data(data_raw.split(" ")[0]) if data_raw else ""
+                            # Converte a data da nota para QDate (formato: dd/MM/yyyy)
+                            note_date = QDate.fromString(data, "dd/MM/yyyy")
+                            if note_date.month() != mes_lancamento_date.month() or note_date.year() != mes_lancamento_date.year():
+                                contador_notas_data_invalida += 1
+                                continue
 
                             tipo = (nota.findtext("DescricaoServico") or "PRODUTO").strip().upper()
                             numero = (nota.findtext("NumeroNota") or "").strip().upper()
@@ -68,15 +77,15 @@ class Funcoes(QObject):
                             valor_str = (nota.findtext("ValorTotalNota") or "0").strip()
                             valor = self.formatar_moeda(valor_str)
 
-                            # Se a nota não existir, adiciona na tabela
                             if not self.verificar_nota_existente(cliente, tipo, numero):
-                                self.adicionar_linha_tabela(cliente, cnpj, data, tipo, numero, municipio, valor,retencao)
+                                self.adicionar_linha_tabela(cliente, cnpj, data, tipo, numero, municipio, valor, retencao)
                                 valor_total += valor
                                 if tipo.upper() == "PRODUTO":
                                     valor_total_produtos += valor
                                 contador_notas_importadas += 1
+
                 else:
-                    # ESTRUTURA ÚNICA (NF-e)
+                    # Estrutura única (NF-e)
                     ns = {}
                     if root.tag.startswith("{"):
                         ns_uri = root.tag.split("}")[0].strip("{")
@@ -96,25 +105,37 @@ class Funcoes(QObject):
 
                     data_raw = (root.findtext(".//nfe:dhEmi", default="", namespaces=ns) or "").strip()
                     data = self.formatar_data(data_raw.split("T")[0]) if data_raw else ""
+                    note_date = QDate.fromString(data, "dd/MM/yyyy")
+                    if note_date.month() != mes_lancamento_date.month() or note_date.year() != mes_lancamento_date.year():
+                        contador_notas_data_invalida += 1
+                        continue
 
                     retencao = "NAO"
-                    tipo = "PRODUTO"  # Define default
+                    tipo = "PRODUTO"  # Valor padrão
                     numero = (root.findtext(".//nfe:nNF", default="", namespaces=ns) or "").strip().upper()
                     valor_str = (root.findtext(".//nfe:vOrig", default="0", namespaces=ns) or "0").strip()
                     valor = self.formatar_moeda(valor_str)
 
                     if not self.verificar_nota_existente(cliente, tipo, numero):
-                        self.adicionar_linha_tabela(cliente, cnpj, data, tipo, numero, municipio, retencao, valor, retencao)
+                        self.adicionar_linha_tabela(cliente, cnpj, data, tipo, numero, municipio, valor, retencao)
                         valor_total += valor
                         if tipo.upper() == "PRODUTO":
                             valor_total_produtos += valor
                         contador_notas_importadas += 1
 
             except Exception as e:
+                print(e)
                 QMessageBox.critical(None, "Erro", f"Erro ao processar {arquivo}:\n{str(e)}")
 
-        
-        self.atualizar_totais(valor_total_produtos,0)
+        self.atualizar_totais(valor_total_produtos, 0)
+
+        # Informa ao usuário se houver notas não lançadas devido à data
+        if contador_notas_data_invalida > 0:
+            QMessageBox.information(
+                None,
+                "Notas não importadas",
+                f"{contador_notas_data_invalida} nota(s) não foram lançadas pois a data de emissão não confere com o mês/ano do lançamento."
+            )
 
     def editar_registro(self):
         """Permite editar o valor e reajusta a soma total"""
@@ -138,7 +159,6 @@ class Funcoes(QObject):
                                 item_valor.setText(f"R$ {novo_valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
                                 self.recalcular_total()
                         break  
-
 
     def excluir_registro(self):
         """Remove a linha correspondente e refaz a soma do total"""
@@ -291,20 +311,23 @@ class Funcoes(QObject):
         cnpj = "".join(filter(str.isdigit, cnpj))
         return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:14]}" if len(cnpj) == 14 else cnpj
 
-    def carregar_dados_cliente(self, event):
+    def carregar_dados_cliente(self):
         ref = db.reference("/Clientes")
         clientes = ref.get() 
         
         ui.campo_cliente_lancamento.clear()
         ui.campo_cliente_lancamento_2.clear()
+        ui.campo_cliente_editar.clear()
 
         ui.campo_cliente_lancamento.addItem("")  
         ui.campo_cliente_lancamento_2.addItem("")
+        ui.campo_cliente_editar.addItem("")
 
         for key in clientes:
             ui.campo_cliente_lancamento.addItem(key)
             ui.campo_cliente_lancamento_2.addItem(key)
-           
+            ui.campo_cliente_editar.addItem(key)
+     
     def carregar_informacoes_cliente(self):
         cliente = ui.campo_cliente_lancamento.currentText()
         if cliente:
@@ -312,35 +335,41 @@ class Funcoes(QObject):
             dados_cliente = dados.get()
 
             try:
-                ui.campo_id.setText(dados_cliente['id'])
                 ui.campo_cnpj_cliente.setText(self.formatar_cnpj(dados_cliente['cnpj']))
                 ui.campo_ie.setText(dados_cliente['ie'])
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
     def abrir_janela_lancar_manual(self):
         janela_manual.show()
         pass
 
-    def buscar_dados_cnpj(self,cnpj):
+    def buscar_dados_cnpj(self, campo_cnpj, campo_municipio=None, campo_razao_social=None):
         try:
+            cnpj = campo_cnpj.text().strip()  # Obtém o CNPJ digitado no campo correspondente
+            cnpj = cnpj.replace(".", "").replace("/", "").replace("-", "")
+            if not cnpj:  # Se o campo estiver vazio, não faz nada
+                return
+
             url = f"https://www.receitaws.com.br/v1/cnpj/{cnpj}"
             resposta = requests.get(url, timeout=10)
             data = resposta.json()
-            mun = data['municipio']
-            uf = data['uf']
-            nome = data['nome']
-        except:
-            mun = '--'
-            uf = '--'
-            nome = '--'
-        pass
 
-        municipio = f'{mun} - {uf}'  # Pega o municipio e UF pela API da Receita
-        cliente = nome
+            # Captura os dados da API
+            municipio = f"{data.get('municipio', '--')} - {data.get('uf', '--')}"
+            razao_social = data.get('nome', '--')
 
-        ui_2.campo_municipio_nota_manual.setText(municipio)
-        ui_2.campo_razao_social_manual.setText(cliente)
+        except Exception as e:
+            print(f"Erro ao buscar CNPJ: {e}")
+            municipio = "--"
+            razao_social = "--"
+
+        # Preenche os campos, se forem passados como parâmetros
+        if campo_municipio:
+            campo_municipio.setText(municipio)
+        
+        if campo_razao_social:
+            campo_razao_social.setText(razao_social)
 
     def importar_manual(self):
         # Obtém os dados dos campos da janela de lançamento manual
@@ -382,7 +411,7 @@ class Funcoes(QObject):
 
         except ValueError:
 
-            QMessageBox.warning(self, "Erro", "Por favor, insira um valor válido para a nota.")
+            QMessageBox.warning(None, "Erro", "Por favor, insira os dados da NFe.")
 
     def evento_ao_fechar(self, event):
         """Fecha a janela secundária ao fechar a principal"""
@@ -390,6 +419,21 @@ class Funcoes(QObject):
             janela_manual.close()  
 
         event.accept()  
+
+    def evento_ao_abrir(self,event):
+        data_atual = QDate.currentDate()
+    
+        # Define a data atual para os widgets QDateEdit
+        ui.data_lancamento.setDate(data_atual)
+        ui.data_consulta.setDate(data_atual)
+        ui.data_obrigacoes.setDate(data_atual)
+        
+        # Configura o formato de exibição para MM/yyyy
+        ui.data_lancamento.setDisplayFormat("MM/yyyy")
+        ui.data_consulta.setDisplayFormat("MM/yyyy")
+        ui.data_obrigacoes.setDisplayFormat("MM/yyyy")
+
+        self.carregar_dados_cliente()
 
     def iniciar_splash(self):
         """Atualiza a barra de progresso suavemente e fecha a splash após 5 segundos"""
@@ -435,13 +479,51 @@ class Funcoes(QObject):
             return data.strftime("%m/%Y")
 
     def salvar_dados_xml(self):
-        usuario = self.ui.campo_cliente_lancamento.currentText()
+
+
+
+        usuario = ui.campo_cliente_lancamento.currentText()
+        data = ui.data_lancamento.date()
+
+
+        erros = []
+
+        # Verificação dos campos obrigatórios
+        if usuario == "":
+            erros.append("O nome do cliente não pode estar vazio.")
+        if not data:
+            erros.append("A data não pode estar vazia.")
+
+        # Se houver erros, exibe todos de uma vez e interrompe a execução
+        if erros:
+            QMessageBox.warning(None, "Erros de Validação", "\n".join(erros))
+            return
+
+        # Validação da data: se não for do mês/ano atual
+        data_atual = QDate.currentDate()
+        if data.month() != data_atual.month() or data.year() != data_atual.year():
+            # Caso a data seja 01/2000, exibe erro e interrompe
+            if data.month() == 1 and data.year() == 2000:
+                QMessageBox.critical(None, "Data Inválida", "A data 01/2000 não é permitida. Por favor, informe uma data válida.")
+                return
+            else:
+                resposta = QMessageBox.question(
+                    None,
+                    "Data Inconsistente",
+                    f"A data informada ({data.toString()}) não está no mês/ano atual. Deseja continuar?",
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No
+                )
+                if resposta == QMessageBox.No:
+                    return
+
+
 
         lancamentos_ref = db.reference(f"/Lancamentos/{usuario}")
         
-        qdate = self.ui.mes_lancamento.date()  
-        ano_str = str(qdate.year())
-        mes_str = f"{qdate.month():02d}"  
+          
+        ano_str = str(data.year())
+        mes_str = f"{data.month():02d}"  
         
 
         ano_ref = lancamentos_ref.child(ano_str)
@@ -490,7 +572,6 @@ class Funcoes(QObject):
         
         QMessageBox.information(None, "Salvar XML", "Dados salvos com sucesso!")
 
-
     def iso_para_data_nota(self,data):
         dt = datetime.datetime.strptime(data, "%Y-%m-%dT%H:%M:%SZ")
         qdt = QDateTime(dt)
@@ -507,9 +588,190 @@ class Funcoes(QObject):
         iso_str = dt.strftime("%Y-%m-%dT%H:%M:%SZ")
         return iso_str
         
+    def criar_cliente(self):
+        
+        novo_cliente = ui.campo_nome_cliente_cadastro.text().upper()
+
+        cnpj = ui.campo_cnpj_cliente_cadastro.text()
+        
+        das = ui.checkBox_das_cadastro.isChecked()
+        dctf = ui.checkBox_dctf_cadastro.isChecked()
+        folha = ui.checkBox_folha_cadastro.isChecked()
+        notas = ui.checkBox_notas_cadastro.isChecked()
+        
+        ie = ui.campo_ie_cliente_cadastro.text()
+        observacao = ui.campo_observacoes_cadastro.toPlainText()
+
+        erros = []
+
+        # Verificação se os campos obrigatórios estão preenchidos
+        if not novo_cliente:
+            erros.append("O nome do cliente não pode estar vazio.")
+        if not cnpj:
+            erros.append("O CNPJ não pode estar vazio.")
+        if not ie:
+            erros.append("A Inscrição Estadual (IE) não pode estar vazia.")
+
+        # Se houver erros, exibir mensagem e cancelar o cadastro
+        if erros:
+            QMessageBox.warning(None, "Erro no Cadastro", "\n".join(erros))  # ⬅ Passando None para evitar erro
+            return
+
+        clientes = db.reference(f"/Clientes")
+
+        
+        dados_cliente = {
+            "nome" : novo_cliente,
+            "cnpj" : cnpj,
+            "das" : das,
+            "dctf" : dctf,
+            "folha" : folha,
+            "notas" : notas,
+            "ie" : ie,
+            "observacoes": observacao
+        }
+
+        clientes.child(novo_cliente).set(dados_cliente)
+
+        ui.campo_cnpj_cliente_cadastro.clear()
+        ui.campo_ie_cliente_cadastro.clear()
+        ui.campo_observacoes_cadastro.clear()  
+        ui.campo_nome_cliente_cadastro.clear()
+
+    # Desmarca os checkboxes
+        ui.checkBox_das_cadastro.setChecked(False)
+        ui.checkBox_dctf_cadastro.setChecked(False)
+        ui.checkBox_folha_cadastro.setChecked(False)
+        ui.checkBox_notas_cadastro.setChecked(False)
+
+        self.carregar_dados_cliente()
+
+    def carregar_dados_cliente_edicao(self):
+        pass
+
+    def salvar_dados_cliente_editados(self):
+        pass
 
 
 
+    def atualizar_estado(self, row, col, state, tabela):
+        """
+        Atualiza o estado da célula após o clique no checkbox.
+        """
+        if state == QtCore.Qt.Checked:  # Use QtCore.Qt.Checked
+            pass
+        elif state == QtCore.Qt.Unchecked:  # Use QtCore.Qt.Unchecked
+            pass
+        elif state == QtCore.Qt.PartiallyChecked:  # Caso o checkbox esteja em estado indeterminado
+            pass
+
+    def gerar_lista_de_afazeres(self):
+        tabela = self.ui.tabela_obrigacoes
+        tabela.clear()
+
+        # 1. Verifica se a data do campo data_obrigacoes é diferente de "01/2000"
+        data_obrigacoes_str = self.ui.data_obrigacoes.date().toString("MM/yyyy")
+        print(f"Data obrigações: {data_obrigacoes_str}")  # Imprime a data
+        if data_obrigacoes_str == "01/2000":
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(self, "Data Inválida", 
+                                "O campo Data Obrigações está com a data 01/2000. Por favor, atualize a data.")
+            return
+
+        # 2. Obtém os clientes do banco de dados
+        ref = db.reference("/Clientes")
+        clientes = ref.get()
+        print(f"Clientes obtidos do banco: {clientes}")  # Imprime os clientes
+        # Se não houver clientes, informa e encerra
+        if not clientes:
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.information(self, "Informação", "Nenhum cliente encontrado no banco de dados.")
+            return
+
+        # 3. Percorre os nós de clientes e extrai os dados desejados
+        lista_clientes = []
+        for nome_cliente, dados in clientes.items():
+            cliente_info = {
+                "nome": nome_cliente,
+                "das": dados.get("das", False),
+                "dctf": dados.get("dctf", False),
+                "folha": dados.get("folha", False),
+                "nfe": dados.get("notas", False),
+                "observacao": dados.get("observacoes", "")  # Corrigido para 'observacoes'
+            }
+            lista_clientes.append(cliente_info)
+            print(f"Cliente info: {cliente_info}")  # Imprime as informações do cliente
+
+        # 4. Preenche a tabela_obrigacoes com os dados dos clientes
+        tabela.setRowCount(len(lista_clientes))
+        tabela.setColumnCount(6)  # Cliente, Folha, DCTF, DAS, NFe, Observação
+        tabela.setHorizontalHeaderLabels(["Cliente", "Folha", "DCTF", "DAS", "NFe", "Observação"])
+
+        for row, cliente in enumerate(lista_clientes):
+            print(f"Processando cliente na linha {row}: {cliente}")  # Imprime o cliente na linha
+
+            # Coluna 0: Nome do cliente (texto)
+            item_nome = QTableWidgetItem(cliente["nome"])
+            tabela.setItem(row, 0, item_nome)
+            print(f"Nome do cliente: {cliente['nome']}")  # Imprime o nome do cliente
+
+            # Adiciona checkbox apenas se o valor for True e centraliza
+            def adicionar_checkbox(col, valor):
+                if valor:
+                    checkbox = QCheckBox()
+                    checkbox.setChecked(False)  # Sempre inicia desmarcado
+
+                    # Criar container para centralizar
+                    container = QWidget()
+                    layout = QHBoxLayout()
+                    layout.addWidget(checkbox)
+                    layout.setAlignment(Qt.AlignCenter)  # Centraliza o checkbox
+                    layout.setContentsMargins(0, 0, 0, 0)  # Remove margens
+
+                    container.setLayout(layout)
+                    tabela.setCellWidget(row, col, container)
+
+                    # Conectar evento ao checkbox
+                    checkbox.stateChanged.connect(lambda state, row=row, col=col: self.atualizar_estado(row, col, state, tabela))
+
+            adicionar_checkbox(1, cliente["folha"])
+            print(f"Folha: {cliente['folha']}")  # Imprime o valor da folha
+            adicionar_checkbox(2, cliente["dctf"])
+            print(f"DCTF: {cliente['dctf']}")  # Imprime o valor do DCTF
+            adicionar_checkbox(3, cliente["das"])
+            print(f"DAS: {cliente['das']}")  # Imprime o valor do DAS
+            adicionar_checkbox(4, cliente["nfe"])
+            print(f"NFe: {cliente['nfe']}")  # Imprime o valor da NFe
+
+            # Coluna 5: Observação (texto)
+            item_obs = QTableWidgetItem(cliente["observacao"])  # Criar item com a observação
+            print(f"Observação: {item_obs.text()}")  # Imprime o texto da observação
+            tabela.setItem(row, 5, item_obs)  # Definir item na tabela
+
+        self.ajustar_largura_coluna_obrigacoes()
+
+
+
+
+    def ajustar_largura_coluna_obrigacoes(self):
+        ui.tabela_obrigacoes.setColumnWidth(0, 250)  
+        ui.tabela_obrigacoes.setColumnWidth(1, 70)  
+        ui.tabela_obrigacoes.setColumnWidth(2, 70)
+        ui.tabela_obrigacoes.setColumnWidth(3, 70)
+        ui.tabela_obrigacoes.setColumnWidth(4, 70)
+        ui.tabela_obrigacoes.setColumnWidth(5, 503)
+
+
+
+    def gerar_nova_lista_afazeres(self):
+        pass
+
+
+    def mudanca_de_aba(self):
+        index = self.ui.tabWidget.currentIndex()
+
+        if index == 3:
+            self.ajustar_largura_coluna_obrigacoes()
 
 
 # Configuração da aplicação
@@ -538,22 +800,32 @@ janela_manual.setWindowTitle("Lançamento manual")
 
 janela_login.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-ui_2.campo_cnpj_manual.editingFinished.connect(lambda: funcoes_app.buscar_dados_cnpj(ui_2.campo_cnpj_manual.text()))
+#EDIÇÃO
+
 ui_2.campo_cnpj_manual.editingFinished.connect(lambda: ui_2.campo_cnpj_manual.setText(funcoes_app.formatar_cnpj(ui_2.campo_cnpj_manual.text())))
 
+ui.campo_cnpj_cliente_cadastro.editingFinished.connect(lambda: ui.campo_cnpj_cliente_cadastro.setText(funcoes_app.formatar_cnpj(ui.campo_cnpj_cliente_cadastro.text())))
 
+ui.campo_cnpj_cliente_cadastro.editingFinished.connect(lambda: funcoes_app.buscar_dados_cnpj(ui.campo_cnpj_cliente_cadastro,campo_razao_social=ui.campo_nome_cliente_cadastro))
+
+# Quando for o campo de CNPJ no outro formulário
+ui_2.campo_cnpj_manual.editingFinished.connect(lambda: funcoes_app.buscar_dados_cnpj(ui_2.campo_cnpj_manual,campo_municipio = ui_2.campo_municipio_nota_manual,campo_razao_social=ui_2.campo_razao_social_manual ))
+
+ui.tabWidget.currentChanged.connect(lambda: funcoes_app.mudanca_de_aba())
+#BOTÕES
+ui.btn_consulta_lista_afazeres.clicked.connect(lambda: funcoes_app.gerar_lista_de_afazeres())
+ui.btn_salvar_cadastro.clicked.connect(lambda: funcoes_app.criar_cliente())
 ui.btn_salvar.clicked.connect(lambda: funcoes_app.salvar_dados_xml())
-ui_2.campo_cnpj_manual.editingFinished.connect(lambda: ui_2.campo_cnpj_manual.setText(funcoes_app.formatar_cnpj(ui_2.campo_cnpj_manual.text())))
 ui_2.btn_importar_manual.clicked.connect(lambda: funcoes_app.importar_manual())
 ui.btn_importar_xml.clicked.connect(lambda: funcoes_app.importar_xml())
 ui.btn_lancar_manual.clicked.connect(lambda: funcoes_app.abrir_janela_lancar_manual())
 ui.campo_cliente_lancamento.currentIndexChanged.connect(lambda: funcoes_app.carregar_informacoes_cliente())
 
-ui.btn_importar_xml.setIconSize(QSize(64, 64))
-janela.showEvent = funcoes_app.carregar_dados_cliente
+
+janela.showEvent = funcoes_app.evento_ao_abrir
 janela.closeEvent = funcoes_app.evento_ao_fechar
 
-janela.setFixedSize(1126, 803)
+janela.setFixedSize(1115, 603)
 janela_login.show()
 funcoes_app.iniciar_splash() 
 

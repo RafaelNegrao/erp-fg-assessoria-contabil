@@ -385,12 +385,12 @@ QComboBox::drop-down {
     </property>
     <property name="icon">
      <iconset resource="icons.qrc">
-      <normaloff>:/icons/upload.svg</normaloff>:/icons/upload.svg</iconset>
+      <normaloff>:/icons/download-direto.svg</normaloff>:/icons/download-direto.svg</iconset>
     </property>
     <property name="iconSize">
      <size>
-      <width>23</width>
-      <height>23</height>
+      <width>27</width>
+      <height>27</height>
      </size>
     </property>
    </widget>
